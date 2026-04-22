@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Lock, Terminal, Activity, Database, Grid, Search, Play, FileWarning, AlertTriangle, LogOut } from 'lucide-react';
+import { Shield, Lock, Terminal, Activity, Database, Grid, Search, Play, FileWarning, AlertTriangle, LogOut, ServerCog } from 'lucide-react';
 import { CyberButton } from './CyberButton';
 import { motion } from 'motion/react';
 import { CyberAnimation } from './CyberAnimation';
@@ -125,6 +125,18 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onSelectGame, user, onLogout
              <div className="flex items-center justify-between mt-auto pt-4">
                 <span className="text-[10px] md:text-xs font-mono text-red-500 bg-red-900/20 px-2 py-1 rounded">ESTRATEGIA</span>
                 <CyberButton onClick={() => onSelectGame('soc-log-hunter')} color="red"><Play size={16}/> JUGAR</CyberButton>
+            </div>
+        </motion.div>
+
+        {/* Card 7 - FortiManager */}
+        <motion.div variants={itemVariants} onClick={() => onSelectGame('fortimanager')} className="group bg-slate-800 border border-slate-700 hover:border-red-600 rounded-xl p-6 transition-all duration-300 hover:shadow-[0_0_30px_rgba(220,38,38,0.2)] hover:-translate-y-2 relative overflow-hidden cursor-pointer flex flex-col active:scale-95 md:col-span-1 lg:col-span-1">
+             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-red-500"><Shield size={100} /></div>
+            <div className="mb-4 text-red-500 bg-red-900/30 w-fit p-3 rounded-lg"><ServerCog size={32} /></div>
+            <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">FortiManager 7.6.6</h3>
+            <p className="text-slate-400 text-sm mb-6 flex-grow">Centralized Management, ADOMs, Policies & VPNs.</p>
+             <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-700">
+                <span className="text-[10px] md:text-xs font-mono text-red-400 bg-red-950 px-2 py-1 rounded border border-red-900/50">ADMINISTRACIÓN</span>
+                <CyberButton onClick={() => onSelectGame('fortimanager')} color="red"><Play size={16}/> JUGAR</CyberButton>
             </div>
         </motion.div>
 

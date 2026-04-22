@@ -8,6 +8,7 @@ import { MainMenu } from './components/MainMenu';
 import { GameOverModal } from './components/GameOverModal';
 import { FirewallRacer } from './games/FirewallRacer';
 import { NetOpsChallenge } from './games/NetOpsChallenge';
+import { FortiManagerChallenge } from './games/FortiManagerChallenge';
 import { BotnetHunter } from './games/BotnetHunter';
 import { PacketPuzzle } from './games/PacketPuzzle';
 import { SwitchingLab } from './games/SwitchingLab';
@@ -85,6 +86,7 @@ export default function App() {
       <div className={`flex-grow relative w-full ${(screen === 'menu' || screen === 'register') ? 'hidden' : 'h-full'}`}>
           {screen === 'packet' && <FirewallRacer onGameOver={handleGameOver} onBack={goToMenu} />}
           {screen === 'patcher' && <NetOpsChallenge onGameOver={handleGameOver} onBack={goToMenu} />}
+          {screen === 'fortimanager' && <FortiManagerChallenge onGameOver={handleGameOver} onBack={goToMenu} />}
           {screen === 'botnet' && <BotnetHunter onGameOver={handleGameOver} onBack={goToMenu} />}
           
           {screen === 'packet-puzzle' && <PacketPuzzle onGameOver={handleGameOver} onBack={goToMenu} />}

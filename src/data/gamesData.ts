@@ -231,6 +231,384 @@ export const CCNA_QUESTIONS = [
   { id: 213, category: "Wireless", scenario: "Which 802.11 frame type is used to acknowledge the successful receipt of a data frame?", options: [ { label: "Management frame", correct: false, feedback: "Incorrect." }, { label: "Control frame", correct: true, feedback: "Correct! ACK frames are a type of Control frame." }, { label: "Data frame", correct: false, feedback: "Incorrect." } ] }
 ];
 
+export const FORTIMANAGER_QUESTIONS = [
+  { 
+    id: 1, 
+    category: "Administration", 
+    scenario: "You want to let multiple administrators work in the same ADOM without creating configuration conflicts.\n\nWhat is the best and the most effective solution to apply?", 
+    options: [ 
+      { label: "Configure RADIUS authentication to assign ADOM roles to each user.", correct: false, feedback: "Incorrect. RADIUS handles authentication, not concurrent configuration." }, 
+      { label: "Enable workflow mode, which is the only way to prevent concurrent configuration conflicts.", correct: false, feedback: "Incorrect. Workflow requires approval, but workspace mode handles concurrent editing better." }, 
+      { label: "Assign administrators with JSON API access to the FortiManager.", correct: false, feedback: "Incorrect." }, 
+      { label: "Activate workspace mode in the ADOM settings.", correct: true, feedback: "Correct! Activating workspace mode in the ADOM settings allows multiple administrators to work concurrently in the same ADOM by isolating their configuration changes in separate workspaces." } 
+    ] 
+  },
+  { 
+    id: 2, 
+    category: "High Availability", 
+    scenario: "In a FortiManager cluster settings GUI, the Failover Mode is set to 'Manual VRRP', and the monitored interface 'port2' is configured.\n\nIf the monitored interface for the primary FortiManager device fails, what must you do to maintain high availability (HA)?", 
+    options: [ 
+      { label: "The FortiManager HA failover is transparent to administrators and does not require any additional action.", correct: true, feedback: "Correct! In a FortiManager HA cluster configured with VRRP failover, the failover process is automatic and transparent to administrators." }, 
+      { label: "Manually promote one of the working secondary devices to the primary role: and reboot the original primary device to remove the peer IP address of the failed device.", correct: false, feedback: "Incorrect." }, 
+      { label: "Reconfigure the primary device to remove the peer IP address of the failed device from its configuration.", correct: false, feedback: "Incorrect." }, 
+      { label: "Check the integrity database of the primary device to force a secondary device to become the new primary with all active interfaces.", correct: false, feedback: "Incorrect." } 
+    ] 
+  },
+  { 
+    id: 3, 
+    category: "Firewall Objects", 
+    scenario: "An administrator has created a firewall address object named 'LAN' (IP/Netmask: 172.16.5.0/24) that is used in multiple policy packages. In the Advanced Options for this object, Per-Device Mapping is configured:\n- Mapped Device Remote-Firewall [root] has IP/Netmask: 21.21.2.5/255.255.255.255.\n\nAfter the installation operation is performed, which IP/netmask will be installed on Remote-Firewall [VDOM1] for the LAN firewall address object?", 
+    options: [ 
+      { label: "21.21.2.5/255.255.255.255", correct: true, feedback: "Correct! The per-device mapping overrides the global IP/netmask setting for the firewall address object." }, 
+      { label: "172.16.5.20/255.255.255.255", correct: false, feedback: "Incorrect." }, 
+      { label: "172.16.5.0/255.255.255.0", correct: false, feedback: "Incorrect." }, 
+      { label: "10.10.10.5/255.255.255.255", correct: false, feedback: "Incorrect." } 
+    ] 
+  },
+  {
+    id: 4,
+    category: "Device Management",
+    scenario: "An administrator wants to configure and manage multiple objects in the FortiManager database and give access to other users who work in the same database.\n\nTo stay in control of the changes made to firewall policies by other team members, the administrator needs a setup where all modifications go through a central check before they can be installed. How can the administrator create this setup?",
+    options: [
+      { label: "Enable the prompt asking the administrator to accept firewall policies changes before saving.", correct: false, feedback: "Incorrect." },
+      { label: "Enable the workspace (for all ADOMs) to control all changes made by any administrator.", correct: false, feedback: "Incorrect." },
+      { label: "Enable device lock and the advanced mode feature in the ADOM.", correct: false, feedback: "Incorrect." },
+      { label: "Enable workflow mode and the ADOM lock feature.", correct: true, feedback: "Correct! Enabling workflow mode along with the ADOM lock feature ensures that all configuration changes go through a centralized review and approval process before installation." }
+    ]
+  },
+  {
+    id: 5,
+    category: "Device Management",
+    scenario: "Which two conditions trigger FortiManager to create a new revision history? (Choose two.)",
+    options: [
+      { label: "When FortiManager installs device-level changes on a managed device AND When FortiManager is auto-updated with configuration changes made directly on a managed device.", correct: true, feedback: "Correct! Revisions are created when FortiManager pushes changes OR when it auto-updates from changes made directly on the device." },
+      { label: "When changes to the device-level database are made on FortiManager.", correct: false, feedback: "Incorrect. Modifying the DB doesn't create a revision until installed." },
+      { label: "When a provisioning template is assigned to a managed device on the device-level database.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 6,
+    category: "FortiAnalyzer",
+    scenario: "Which is recommended when you are managing a high volume of logs in your network?",
+    options: [
+      { label: "Store logs on FortiManager and use FortiView.", correct: false, feedback: "Incorrect." },
+      { label: "Add and manage FortiAnalyzer from FortiManager.", correct: true, feedback: "Correct! Adding and managing FortiAnalyzer from FortiManager is recommended for handling a high volume of logs, as it is designed specifically for centralized log management." },
+      { label: "Enable advanced ADOM mode on FortiManager.", correct: false, feedback: "Incorrect." },
+      { label: "Forward logs from FortiAnalyzer to FortiManager daily.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 7,
+    category: "Scripts",
+    scenario: "While attempting to push a NetFlow configuration script through the FortiManager policy package, an administrator encounters an error stating that an object is unrecognized in line 4:\n[line 4] > config sys interface [parameter(s) invalid. detail: object unrecognized]\n\nWhat must the administrator do to successfully apply the NetFlow configuration script and avoid the object unrecognized error?",
+    options: [
+      { label: "Make sure the user running the script has full access to the VDOM—AGEUSR.", correct: false, feedback: "Incorrect." },
+      { label: "Run the script on the device database.", correct: false, feedback: "Incorrect." },
+      { label: "Use metadata variables if they use VDOMs in the script.", correct: true, feedback: "Correct! When using scripts that reference VDOM-specific objects (like interfaces) in FortiManager, metadata variables must be used to correctly map those objects per VDOM." },
+      { label: "Create a normalized interface on the policy layer before running the script.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 8,
+    category: "Provisioning",
+    scenario: "What is the best explanation of how FortiManager helps with mass provisioning?",
+    options: [
+      { label: "It upgrades the OS of each FortiGate device.", correct: false, feedback: "Incorrect." },
+      { label: "It provides local FortiGuard Distribution Server (FDS) services to the network.", correct: false, feedback: "Incorrect." },
+      { label: "It uses templates to configure the same settings on many devices simultaneously.", correct: true, feedback: "Correct! FortiManager uses templates to easily apply the same configurations across multiple devices." },
+      { label: "It sends email alerts when new devices connect.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 9,
+    category: "Revisions",
+    scenario: "What is the purpose of ADOM revisions?",
+    options: [
+      { label: "ADOM revisions find unused, duplicate, and unnecessary firewall policies and objects.", correct: false, feedback: "Incorrect." },
+      { label: "ADOM revisions show specific changes in a policy package when it is installed.", correct: false, feedback: "Incorrect." },
+      { label: "ADOM revisions save the current state of all policy packages and objects for an ADOM.", correct: true, feedback: "Correct! ADOM revisions save the current state of all policy packages and objects within an ADOM, allowing you to track changes or revert." },
+      { label: "ADOM revisions compare previous snapshots of the Policy Package with the device-level database.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 10,
+    category: "Objects",
+    scenario: "An administrator created two new meta fields in FortiManager. Which operation can you perform with these parameters?",
+    options: [
+      { label: "You can add them to objects as custom attributes.", correct: true, feedback: "Correct! Meta fields in FortiManager can be added to objects as custom attributes for easier management and identification." },
+      { label: "You can export them to be used in other ADOMs.", correct: false, feedback: "Incorrect." },
+      { label: "You can use them as variables in scripts.", correct: false, feedback: "Incorrect." },
+      { label: "You can invoke them using the $ character.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 11,
+    category: "Policy Packages",
+    scenario: "An administrator has assigned a global policy package to a new ADOM named ADOM1. What will happen if the administrator tries to create a new policy package in ADOM1?",
+    options: [
+      { label: "The administrator will be able to select the option to assign the global policy package to the new policy package.", correct: true, feedback: "Correct! When a global policy package is assigned to an ADOM, administrators creating new packages have the option to assign the global package to it." },
+      { label: "FortiManager will automatically assign the global policy package to the new policy package.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager will automatically install policies on the policy package in ADOM1.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator will have to assign the global policy package from the global ADOM.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 12,
+    category: "Device Management",
+    scenario: "Push updates are failing on a FortiGate device located behind a network address translation (NAT) device.\n\nWhich two settings should the administrator check to correct this problem? (Choose two.)",
+    options: [
+      { label: "Make sure the NAT device IP address and the correct ports are configured on FortiManager, AND make sure the virtual IP address and the correct ports are configured on the NAT device.", correct: true, feedback: "Correct! FortiManager needs the NAT device's IP/ports to reach the FortiGate, and the NAT device needs correct VIP mappings." },
+      { label: "Make sure FortiGuard updates and web service are enabled on the FortiGuard service interface.", correct: false, feedback: "Incorrect." },
+      { label: "Make sure the Bind to IP address option on the FortiGuard service interface is set to the virtual IP address from the NAT device.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 13,
+    category: "Revisions",
+    scenario: "Company policy dictates that any time a change is made to a policy package on FortiManager an ADOM revision is created, and held for a minimum of 90 days. The administrator plans to upgrade FortiGate devices and then upgrade the ADOM from 7.4 to 7.6.\n\nWhich action can the administrator take to avoid slow ADOM upgrades?",
+    options: [
+      { label: "Check and repair the global configuration database before upgrading.", correct: false, feedback: "Incorrect." },
+      { label: "Export firewall policies to Excel, delete them on the ADOM, then reimport them after upgrading the ADOM.", correct: false, feedback: "Incorrect." },
+      { label: "Limit ADOM revisions before upgrading.", correct: true, feedback: "Correct! Limiting ADOM revisions reduces the number of stored historical configurations, which helps avoid performance degradation and slow ADOM upgrades." },
+      { label: "Find unused firmware templates, then delete them before upgrading.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 14,
+    category: "Device Management",
+    scenario: "An administrator must create a policy and install it on a FortiGate device within an ADOM in backup mode. How can the administrator perform this task?",
+    options: [
+      { label: "Use the Install Wizard located on the device manager.", correct: false, feedback: "Incorrect." },
+      { label: "Enable workflow mode to allow policy creation and approval.", correct: false, feedback: "Incorrect." },
+      { label: "Make sure the ADOM and FortiGate firmware versions match and use the ADOM policy package.", correct: false, feedback: "Incorrect. Backup mode doesn't use standard policy packages." },
+      { label: "Use a FortiManager script to apply the configuration changes.", correct: true, feedback: "Correct! In backup mode, FortiManager does not directly manage policy installation via the usual ADOM policy packages; instead, administrators use scripts to push configuration changes." }
+    ]
+  },
+  {
+    id: 15,
+    category: "Device Management",
+    scenario: "An administrator is copying a system template profile between ADOMs by running the following command in the CLI:\nexecute fmprofile export-profile ADOM 3547 /tmp/Backup_File output dump to file:\n\nWhere does this command export the system template profile from?",
+    options: [
+      { label: "FortiManager /tmp/Backup_File folder", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager ADOM policy database", correct: true, feedback: "Correct! The command exports the system template profile from the FortiManager ADOM policy database." },
+      { label: "ADOM device database", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager configuration backup file", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 16,
+    category: "VPN & Scripts",
+    scenario: "The administrator uses FortiManager to push a CLI script using the Remote FortiGate Directly (via CLI) option to configure an IPsec VPN. However, when running the script, the administrator receives an error:",
+    codeBlock: "config vpn ipsec phase2-interface [parameter(s) invalid. detail: object mismatch]",
+    options: [
+      { label: "Add the end command after finishing the IPsec phase 1-interface configuration block.", correct: false, feedback: "Incorrect." },
+      { label: "Use IPsec templates to deploy provisioning templates.", correct: false, feedback: "Incorrect." },
+      { label: "Add a second config vpn ipsec phase2-interface block without linking it to phase1.", correct: false, feedback: "Incorrect." },
+      { label: "Run the script using the policy package or ADOM database method.", correct: true, feedback: "Correct! Running it through the policy package solves object relationships and dependencies in the IPsec configuration, preventing mismatch errors." }
+    ]
+  },
+  {
+    id: 17,
+    category: "VDOM Management",
+    scenario: "An administrator has a FortiGate-HQ device with VDOMs—root, HR and Facilities, currently managed under the FortiManager ADOM—Site1. They try to move VDOM HR to the FortiManager ADOM—Site2, but it does not work. Why is the administrator not able to move FortiGate-HQ VDOM HR to FortiManager ADOM—Site2?",
+    options: [
+      { label: "The FortiGate-HQ must be managed under the FortiManager ADOM—root to allow moving its VDOMs to different ADOMs.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager must be in ADOM normal mode, which does not allow VDOMs to be managed separately.", correct: true, feedback: "Correct! Managing the root VDOM in a different ADOM prevents moving subordinate VDOMs across ADOMs." },
+      { label: "The administrator must have full access in the device layer of FortiGate-HQ VDOM-root before they can move VDOMs to different ADOMs.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator must delete the FortiGate-HQ device from FortiManager and add it again using the Add Device wizard before moving the VDOM.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 18,
+    category: "Discovery & NAT",
+    scenario: "FortiManager is operating behind a network address translation (NAT) device, and the administrator configured the FortiManager NATed IP address under the FortiManager system administration settings. What is the expected result during discovery?",
+    codeBlock: "┌──────────────────────────────────────────────┐\n│         FortiManager VIP                     │\n│         100.65.0.120                         │\n│               | WAN                          │\n│[FMG 10.x]-- NAT 100.65.0.101 --- 100.65.x.x[FGT]│\n└──────────────────────────────────────────────┘\n\nconfig system admin setting\n  set mgmt-addr 100.65.0.120\nend",
+    options: [
+      { label: "FortiManager sets both the 100.65.0.120 IP address and 10.0.13.120 IP address on FortiGate.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager sets the 100.65.0.101 IP address on FortiGate.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager sets the 100.65.0.120 IP address on FortiGate.", correct: true, feedback: "Correct! When FortiManager is behind a NAT device, setting the NATed IP address causes it to use that IP for communication with FortiGate." },
+      { label: "FortiManager sets both the 100.65.0.120 IP address and 100.65.0.101 IP address on FortiGate.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 19,
+    category: "Device Database",
+    scenario: "An administrator configures a new BGP peer in the FortiManager device-level database of FortiGate. They reinstall the policy package to the managed FortiGate device without any errors. However, when the administrator logs in to FortiGate, they do not see the BGP configuration changes. What is the most likely reason?",
+    options: [
+      { label: "The administrator must run a sanity check on FortiManager to make sure the database is not corrupted.", correct: false, feedback: "Incorrect." },
+      { label: "Fortigate has a BGP template assigned on the FortiManager database.", correct: true, feedback: "Correct! If a template is assigned to the device, direct DB configurations are overridden by the template settings." },
+      { label: "The administrator must use the Install Wizard and select Install device settings only to push BGP settings", correct: false, feedback: "Incorrect." },
+      { label: "The FortiGate firmware version is different from the FortiManager ADOM version.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 20,
+    category: "Policy Packages",
+    scenario: "An administrator has been asked to install the same policies from a central policy package onto the BR1-FGT-1 firewall. The administrator added BR1-FGT-1 as a target. What should the administrator do when reinstalling the central policy package on the BR1-FGT-1 firewall?",
+    codeBlock: "Installation Targets | Central policy package\n=============================================\n[+] BR1-FGT-1        | Synchronized | BR1-FGT-1\n[+] Local-Firewall   | Unknown      | Central\n[+] Remote-Firewall  | Unknown      | Central",
+    options: [
+      { label: "Assign only one policy package to the firewall because FortiManager does not allow more than one policy package assigned per device at the same time.", correct: true, feedback: "Correct! A device can only have one policy package assigned to it at a time." },
+      { label: "Import the policy package to change the unknown status and synchronize the policy package.", correct: false, feedback: "Incorrect." },
+      { label: "Use the install wizard to install the central policy package on the BR1-FGT-1 firewall.", correct: false, feedback: "Incorrect." },
+      { label: "First resolve the modified status in the configuration and provisioning templates to allow a smooth installation.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 21,
+    category: "Security & Tokens",
+    scenario: "An administrator needs to push a FortiToken Mobile to assign it to HR_user in the HQ-NGFW-1. However, when installing the policy package, they receive an error message. Why is the administrator not able to install the FortiToken?",
+    codeBlock: 'Copy objects for vdom root\n"firewall policy", "1", id=5532, COMMIT FAIL - invalid value -\nprop[user fortitoken]: Mobile FortiToken FTKM0B4... used by local HR_user could not be found at device',
+    options: [
+      { label: "The administrator must use a user local meta field to assign FortiToken.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator must use a valid FortiToken that exists on HQ-NGFW-1.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator must use a metadata variable to assign the same FortiToken to multiple users in FortiManager.", correct: true, feedback: "Correct! The token must exist on the FortiGate, but solving this centrally requires metadata mappings per the exam guidelines." },
+      { label: "The administrator must use per-device mapping to assign the FortiToken to HQ-NGFW-1.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 22,
+    category: "Revisions & Database",
+    scenario: "Review the output of the diagnose dvm device list command. Which statements about the output are true?",
+    codeBlock: "FortiManager # diagnose dvm device list\nTYPE  OID  SN               HA  IP             NAME\nfmg   188  FGV02...3504     -   100.65.1.111   BR1-FGT-1\n|- STATUS: dev-db: not modified; conf: in sync; cond: pending;\n|- dm: installed; conn: up; template:[modified]default\n|- vdom:[3]root flags:0 adom:My_ADOM pkg:[imported]BR1-FGT-1",
+    options: [
+      { label: "The latest revision history for the managed FortiGate matches the device-level database, AND the template is unassigned.", correct: false, feedback: "Incorrect." },
+      { label: "The latest revision history for the managed FortiGate does not match the device-level database, AND the system template default will override device-level database configurations.", correct: true, feedback: "Correct! 'cond: pending' indicates unapplied changes (mismatch). 'template:[modified]' means the template will override settings." },
+      { label: "Configuration changes have been installed on FortiGate, updating policy and device-level database.", correct: false, feedback: "Incorrect." },
+      { label: "The template is not going to override device configurations.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 23,
+    category: "Administration",
+    scenario: "After correcting a policy package configuration issue, you want to prevent administrators from repeating the mistake that caused the issue. Which FortiManager approach best meets this need?",
+    options: [
+      { label: "Configure an TCL script to run locally on FortiManager for each FortiGate.", correct: false, feedback: "Incorrect." },
+      { label: "Restrict administrators with an administration profile from viewing the revision history to limit who can make changes.", correct: true, feedback: "Correct! This matches the required exam answer to restrict profile access, limiting who can push direct unapproved changes." },
+      { label: "Enable the change note to require administrators to add a note whenever they change object configurations.", correct: false, feedback: "Incorrect." },
+      { label: "Enable a workflow requiring approval before installing policy packages on any FortiGate.", correct: false, feedback: "Incorrect (though functionally it makes sense, B is the selected answer in the guide context)." }
+    ]
+  },
+  {
+    id: 24,
+    category: "ADOMs",
+    scenario: "Which CLI output status is displayed right after moving the ISFW device from one ADOM to another?",
+    codeBlock: "FortiManager # diagnose dvm device list ISFW\nTYPE  OID  SN          HA  IP           NAME   ADOM\nfmg   325  FGV..7646   -   10.0.1.200   ISFW   ADOM76\n|- STATUS: dev-db: not modified; conf: in sync; cond: OK;\n|- dm: installed; conn: up\n|- vdom:[3]root flags:0 adom:ADOM76 pkg:[???]",
+    options: [
+      { label: "pkg:[imported]ISFW", correct: false, feedback: "Incorrect." },
+      { label: "pkg:[out-of-sync]ISFW", correct: false, feedback: "Incorrect." },
+      { label: "pkg:[unknown]ISFW", correct: false, feedback: "Incorrect." },
+      { label: "pkg:[never-installed]", correct: true, feedback: "Correct! Right after moving the device to a new ADOM, the status typically shows the policy package as never-installed." }
+    ]
+  },
+  {
+    id: 25,
+    category: "Global Policies",
+    scenario: "A service provider administrator has assigned a global policy package to a managed customer ADOM named My_ADOM. The customer administrator has access only to My_ADOM. How can the customer administrator edit the global header policy of the global policy package?",
+    options: [
+      { label: "The customer administrator can edit the header policy by using workspace mode on the global ADOM.", correct: false, feedback: "Incorrect." },
+      { label: "The service provider administrator can unlock the global policy from the global ADOM to authorize changes to the customer administrator.", correct: false, feedback: "Incorrect." },
+      { label: "The customer administrator cannot edit the global header policy; only the service provider administrator can make changes from the global ADOM.", correct: true, feedback: "Correct! The global policy package is managed only from the global ADOM by the service provider administrator." },
+      { label: "The customer administrator can edit the header policy by using workflow mode on the global ADOM and My_ADOM.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 26,
+    category: "Policy Packages",
+    scenario: "Start to import config from device. What can you conclude from the downloaded import report snippet?",
+    codeBlock: '"firewall address",SKIPPED,"(name=all, oid=2309, DUPLICATE)"\n"firewall address",FAIL,"(name=REMOTE_SUBNET, oid=2311,\nreason=interface binding fail)"\n"firewall policy",FAIL,"reason=interface binding contradiction"',
+    options: [
+      { label: "FortiManager does not support per-device mapping for firewall addresses.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator will see a new policy package named Remote-FortiGate_root in the FortiManager ADOM database.", correct: true, feedback: "Correct! A new policy package will be created, but some addresses/policies failed to import due to interface binding conflicts." },
+      { label: "FortiManager will change the configuration of REMOTE_SUBNET to match the interface mapping coming in from Remote-FortiGate.", correct: false, feedback: "Incorrect." },
+      { label: "As a result of this policy import process, FortiManager will create a new firewall address called REMOTE_SUBNET in the ADOM database.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 27,
+    category: "Administration",
+    scenario: "What are two results from the following workspace configuration?",
+    codeBlock: "FortiManager # config system global\n(global)# set workspace-mode normal\n(global)# end",
+    options: [
+      { label: "The administrator must have access to the ADOM to approve changes.", correct: false, feedback: "Incorrect." },
+      { label: "Ungraceful closed sessions will keep the ADOM locked until the session times out, AND the administrator can lock policy blocks and FortiManager global ADOM.", correct: true, feedback: "Correct! Normal workspace mode keeps ungraceful sessions locked and allows granular locking of policy blocks." },
+      { label: "The same administrator can lock more than one ADOM at the same time.", correct: false, feedback: "Incorrect." },
+      { label: "The system will automatically log off idle users without locking.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 28,
+    category: "Scripts",
+    scenario: "You have a CLI Script created on FortiManager. Which two results occur if you run the script using the 'Device Database' option?",
+    codeBlock: "Create New Script \n----------------------------------\nType: CLI Script\nRun script on: Device Database\n\n1 config router prefix-list\n2  edit public\n3  config rule\n4   edit 1\n5    set prefix 0.0.0.0/0",
+    options: [
+      { label: "The device Config Status is tagged as Modified, AND the administrator must install these changes on a managed device using the Install Wizard.", correct: true, feedback: "Correct! Running a script on the DB marks it as modified. You must use the Install Wizard to actually push the changes to the device." },
+      { label: "The script history shows the successful installation of the script on the remote FortiGate.", correct: false, feedback: "Incorrect. It's only installed on the DB, not the remote FortiGate yet." },
+      { label: "The successful execution of a script on the Device Database creates a new revision history.", correct: false, feedback: "Incorrect. Revisions are created on installation." },
+      { label: "The script is pushed directly to the FortiGate unit.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 29,
+    category: "Troubleshooting",
+    scenario: "An administrator runs a reload failure command on FortiManager. Why does the administrator receive an error message?",
+    codeBlock: "FortiManager # diagnose test deploymanager reloadconf 262\nRetrieving configuration file from FGT...\nError: Configuration file import error.",
+    options: [
+      { label: "The administrator must use the FortiGate name instead of the ID number.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator just recently added FortiGate HQ-NGFW as a model device.", correct: true, feedback: "Correct! The error occurs because the device is a newly added model device and has not yet been fully synchronized or installed with a package." },
+      { label: "FortiManager requires the FortiGate serial number instead of the ID number.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager does not support FortiOS version 7.0.", correct: false, feedback: "Incorrect." }
+    ]
+  },
+  {
+    id: 30,
+    category: "Revisions",
+    scenario: "An administrator reverted the configuration using the Configuration Revision History window and received the CLI output. What can you conclude from the CLI output?",
+    codeBlock: "TYPE  OID  SN             HA  IP             NAME\nfmg   ...  FGV02TM...     -   100.65.1.111   BR1-FGT-1\n|- STATUS: dev-db: not modified; conf: in sync; cond: OK;\n|- dm: installed; conn: up; template:[installed]default\n|- vdom:[3]root flags:0 adom:My_ADOM pkg:[unknown]BR1-FGT-1\nFIRMWARE: N/A",
+    options: [
+      { label: "The administrator set the flag to 0 to prevent configuration overrides.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator installed only the device-level configuration.", correct: true, feedback: "Correct! The output indicates the device-level DB is synced, but firmware is unknown and pkg is unknown, meaning only device-level config was installed." },
+      { label: "The administrator reinstalled the policy package.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator needs to retrieve the device to correctly detect the FortiGate firmware version.", correct: false, feedback: "Incorrect (though plausible, D is the exact answer match in the context)." }
+    ]
+  },
+  {
+    id: 31,
+    category: "Policy Packages",
+    scenario: "An administrator added a FortiGate device to FortiManager with the default object settings at the ADOM layer. What can you conclude from the import policy package process?",
+    codeBlock: "Import Device - HQ-NGFW-1 - Interface Mapping & Policy\n----------------------------------------------------\nDevice Interface | Mapping Type | Normalized Interface\nport2            | Per-Platform | LAN\nport4            | Per-Platform | Port4\nport6            | Per-Platform | port6",
+    options: [
+      { label: "The administrator must select Per Platform for all interfaces to correctly detect all interfaces from HQ-NGFW-1.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator must manually create the port4 interface on the ADOM layer to avoid import policy errors.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager will create LAN, port4, and port6 as normalized interfaces at the ADOM layer.", correct: false, feedback: "Incorrect." },
+      { label: "FortiGate may not work as expected when the administrator does not import all objects.", correct: true, feedback: "Correct! The import process maps interfaces, but failing to import all objects can lead to expected failures." }
+    ]
+  },
+  {
+    id: 32,
+    category: "FortiGuard",
+    scenario: "FortiGate HQ-NGFW-1 downloads and validates FortiGuard databases from FortiManager which acts as a local FDS. FortiGate does not recognize the new IPS signature from FortiManager. What is the most likely reason?",
+    codeBlock: "HQ-NGFW-1 # sh\nconfig system central-management\n  set type fortimanager\n  set serial-number \"FMG-VMTM24012945\"\n  set fmg \"::ffff:10.0.13.120\"\n  config server-list\n    edit 1\n      set server-type update\n      set server-address 192.168.1.120\n    next",
+    options: [
+      { label: "FortiGate must enable rating for the FortiManager IP address, 192.168.1.120, in server list 1.", correct: false, feedback: "Incorrect." },
+      { label: "FortiManager and FortiGate have different IPS database versions.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator must enable IPv6 connections for FortiGuard services on FortiManager.", correct: false, feedback: "Incorrect." },
+      { label: "The administrator must enable the fortiguard-anycast option to correctly download all signatures from the local FDS.", correct: true, feedback: "Correct! The fortiguard-anycast option must be correctly configured to pull all signatures properly." }
+    ]
+  },
+  {
+    id: 33,
+    category: "Installation",
+    scenario: "An administrator assigned a new policy package to FortiGate HQ-NGFW-1. In the installation preview, they noticed some settings they did not modify. Which two things will happen if they continue?",
+    codeBlock: "1 --- Preview result ---\n2 config system central-management\n3   config server-list\n4     edit 1\n5       set server-type update rating\n...\n9 config vpn certificate ca\n10   edit \"root_CA3\"",
+    options: [
+      { label: "FortiGate can use FortiManager firmware templates to upgrade firmware and ratings.", correct: false, feedback: "Incorrect." },
+      { label: "FortiGate HQ-NGFW-1 will use the root_CA3 certificate in firewall address objects or policies.", correct: false, feedback: "Incorrect." },
+      { label: "FortiGate can contact the FortiManager acting as FortiGuard Distribution Server (FDS) to download updates, AND FortiManager will install the CA certificate root_CA3 to authenticate FGFM tunnel connections.", correct: true, feedback: "Correct! Server-type 'update rating' enables FDS functionality, and the root_CA3 certificate authenticates FGFM." },
+      { label: "FortiGate will rebuild the certificate chain remotely.", correct: false, feedback: "Incorrect." }
+    ]
+  }
+];
+
 export const PACKET_PUZZLE_CHALLENGES = [
   { id: 1, base: "192.168.1.0/24", req: "Subred A necesita 60 hosts", correctCIDR: "/26", correctMask: "255.255.255.192", correctFirst: "192.168.1.1", correctBroadcast: "192.168.1.63" },
   { id: 2, base: "10.0.0.0/8", req: "Subred Core necesita 500 hosts", correctCIDR: "/23", correctMask: "255.255.254.0", correctFirst: "10.0.0.1", correctBroadcast: "10.0.1.255" },
