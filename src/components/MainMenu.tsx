@@ -1,7 +1,7 @@
-import React from 'react';
-import { Shield, Lock, Terminal, Activity, Database, Grid, Search, Play, FileWarning, AlertTriangle, LogOut, ServerCog } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, Lock, Terminal, Activity, Database, Grid, Search, Play, FileWarning, AlertTriangle, LogOut, ServerCog, Key } from 'lucide-react';
 import { CyberButton } from './CyberButton';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { CyberAnimation } from './CyberAnimation';
 
 interface MainMenuProps {
@@ -11,6 +11,27 @@ interface MainMenuProps {
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({ onSelectGame, user, onLogout }) => {
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+
+  const handleFortiOSClick = () => {
+    setShowPasswordModal(true);
+    setPasswordError(false);
+    setPasswordInput('');
+  };
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // This is the hardcoded master key requested by the user
+    if (passwordInput === 'niruka') {
+      setShowPasswordModal(false);
+      onSelectGame('fortios');
+    } else {
+      setPasswordError(true);
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -140,7 +161,83 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onSelectGame, user, onLogout
             </div>
         </motion.div>
 
+        {/* Card 8 - FortiOS (Locked) */}
+        <motion.div variants={itemVariants} onClick={handleFortiOSClick} className="group bg-slate-800 border border-slate-700 hover:border-orange-500 rounded-xl p-6 transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.2)] hover:-translate-y-2 relative overflow-hidden cursor-pointer flex flex-col active:scale-95 md:col-span-1 lg:col-span-1">
+             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity text-orange-500"><Lock size={100} /></div>
+            <div className="mb-4 text-orange-500 bg-orange-900/30 w-fit p-3 rounded-lg"><Key size={32} /></div>
+            <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">FortiOS 7.6</h3>
+            <p className="text-slate-400 text-sm mb-6 flex-grow">Advanced Firewalling, Routing, SD-WAN & Security Fabric.</p>
+             <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-700">
+                <span className="text-[10px] md:text-xs font-mono text-orange-400 bg-orange-950 px-2 py-1 rounded border border-orange-900/50">PRIVATE AREA</span>
+                <CyberButton onClick={(e) => { e.stopPropagation(); handleFortiOSClick(); }} color="red"><Lock size={16}/> RESTRICTED</CyberButton>
+            </div>
+        </motion.div>
+
       </motion.div>
+
+      {/* Password Modal */}
+      <AnimatePresence>
+        {showPasswordModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow-2xl max-w-sm w-full relative overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-red-500"></div>
+              
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-orange-500/20 p-2 rounded-lg">
+                  <Key className="text-orange-500" size={24} />
+                </div>
+                <h2 className="text-xl font-bold text-white">Master Key Required</h2>
+              </div>
+              
+              <p className="text-slate-400 text-sm mb-6">
+                El acceso a la academia avanzada de FortiOS está restringido. Ingresa la clave de acceso.
+              </p>
+
+              <form onSubmit={handlePasswordSubmit}>
+                <div className="mb-4 relative">
+                  <input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder="Enter Master Key..."
+                    className={`w-full bg-slate-800 border ${passwordError ? 'border-red-500' : 'border-slate-700'} text-white px-4 py-3 rounded focus:outline-none focus:border-orange-500 font-mono`}
+                    autoFocus
+                  />
+                  {passwordError && (
+                    <span className="absolute -bottom-5 left-0 text-xs text-red-400">ACCESS DENIED. INVALID KEY.</span>
+                  )}
+                </div>
+
+                <div className="flex gap-3 mt-8">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordModal(false)}
+                    className="flex-1 py-2 px-4 bg-slate-800 text-slate-300 rounded hover:bg-slate-700 transition-colors"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 py-2 px-4 bg-gradient-to-r from-orange-600 to-red-600 text-white font-bold rounded hover:from-orange-500 hover:to-red-500 transition-colors shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+                  >
+                    UNLOCK
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <CyberAnimation />
 
