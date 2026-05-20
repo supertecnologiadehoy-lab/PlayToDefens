@@ -9,6 +9,7 @@ import { GameOverModal } from './components/GameOverModal';
 import { FirewallRacer } from './games/FirewallRacer';
 import { NetOpsChallenge } from './games/NetOpsChallenge';
 import { FortiManagerChallenge } from './games/FortiManagerChallenge';
+import { FortiOSChallenge } from './games/FortiOSChallenge';
 import { BotnetHunter } from './games/BotnetHunter';
 import { PacketPuzzle } from './games/PacketPuzzle';
 import { SwitchingLab } from './games/SwitchingLab';
@@ -87,6 +88,7 @@ export default function App() {
           {screen === 'packet' && <FirewallRacer onGameOver={handleGameOver} onBack={goToMenu} />}
           {screen === 'patcher' && <NetOpsChallenge onGameOver={handleGameOver} onBack={goToMenu} />}
           {screen === 'fortimanager' && <FortiManagerChallenge onGameOver={handleGameOver} onBack={goToMenu} />}
+          {screen === 'fortios' && <FortiOSChallenge onGameOver={handleGameOver} onBack={goToMenu} />}
           {screen === 'botnet' && <BotnetHunter onGameOver={handleGameOver} onBack={goToMenu} />}
           
           {screen === 'packet-puzzle' && <PacketPuzzle onGameOver={handleGameOver} onBack={goToMenu} />}
