@@ -158,7 +158,7 @@ export const NetOpsChallenge = ({ onGameOver, onBack }) => {
               </button>
               <div className="text-center">
                   <h2 className="text-xl md:text-2xl font-bold text-blue-400">CISCO NETOPS CLI</h2>
-                  <p className="text-slate-400 text-[10px] md:text-xs font-mono">MODO PRIVILEGIADO - PREGUNTA {currentQuestionIdx + 1}/{questions.length}</p>
+                  <p className="text-slate-400 text-[10px] md:text-xs font-mono">MODO PRIVILEGIADO - PREGUNTA {currentQ.id} ({currentQuestionIdx + 1}/{questions.length})</p>
               </div>
               <div className="flex gap-2 md:gap-4">
                    <div className="flex items-center gap-1 text-red-500">

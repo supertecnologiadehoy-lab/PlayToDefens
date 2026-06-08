@@ -94,7 +94,7 @@ export const FortiManagerChallenge = ({ onGameOver, onBack }: { onGameOver: (sco
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(5);
-  const [selectedOption, setSelectedOption] = useState<any>(null);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [questions, setQuestions] = useState<any[]>([]);
 
@@ -103,25 +103,40 @@ export const FortiManagerChallenge = ({ onGameOver, onBack }: { onGameOver: (sco
       setQuestions(shuffled);
   }, []);
 
+  const currentQ = questions[currentQuestionIdx];
+  const isMultiSelect = currentQ?.options.filter((o: any) => o.correct).length > 1;
+
   const handleOptionSelect = (option: any) => {
       if (showFeedback) return; 
-      setSelectedOption(option);
-      setShowFeedback(true);
-      if (option.correct) {
-          sounds.playSuccess();
+      if (isMultiSelect) {
+          if (selectedOptions.includes(option)) {
+              setSelectedOptions(selectedOptions.filter(o => o !== option));
+          } else {
+              setSelectedOptions([...selectedOptions, option]);
+          }
       } else {
-          sounds.playError();
+          setSelectedOptions([option]);
+          setShowFeedback(true);
+          if (option.correct) {
+              sounds.playSuccess();
+          } else {
+              sounds.playError();
+          }
       }
   };
 
   const handleNext = () => {
-      if (!selectedOption) return;
-      if (selectedOption.correct) {
+      if (selectedOptions.length === 0) return;
+      const correctOptionsCount = currentQ.options.filter((o: any) => o.correct).length;
+      const selectedCorrectCount = selectedOptions.filter((o: any) => o.correct).length;
+      const isAllCorrect = selectedCorrectCount === correctOptionsCount && selectedOptions.length === correctOptionsCount;
+
+      if (isAllCorrect) {
           setScore(s => s + 100);
           if (currentQuestionIdx < questions.length - 1) {
               setCurrentQuestionIdx(idx => idx + 1);
               setShowFeedback(false);
-              setSelectedOption(null);
+              setSelectedOptions([]);
           } else {
               onGameOver(score + 100, "¡Excelente! Has demostrado conocer profundamente la administración de FortiManager 7.6.");
           }
@@ -131,7 +146,7 @@ export const FortiManagerChallenge = ({ onGameOver, onBack }: { onGameOver: (sco
               if (currentQuestionIdx < questions.length - 1) {
                   setCurrentQuestionIdx(idx => idx + 1);
                   setShowFeedback(false);
-                  setSelectedOption(null);
+                  setSelectedOptions([]);
               } else {
                   onGameOver(score, "Has completado el desafío, pero revisa tus conceptos de FortiManager y FortiOS.");
               }
@@ -141,11 +156,12 @@ export const FortiManagerChallenge = ({ onGameOver, onBack }: { onGameOver: (sco
       }
   };
 
-  const currentQ = questions[currentQuestionIdx];
-
   let animStatus = 'idle';
-  if (showFeedback && selectedOption) {
-      animStatus = selectedOption.correct ? 'correct' : 'error';
+  if (showFeedback && selectedOptions.length > 0) {
+      const correctOptionsCount = currentQ?.options.filter((o: any) => o.correct).length || 0;
+      const selectedCorrectCount = selectedOptions.filter((o: any) => o.correct).length;
+      const isAllCorrect = selectedCorrectCount === correctOptionsCount && selectedOptions.length === correctOptionsCount;
+      animStatus = isAllCorrect ? 'correct' : 'error';
   }
 
   if (!currentQ) return <div className="p-8 text-white">Cargando simulador Fortinet...</div>;
@@ -155,76 +171,109 @@ export const FortiManagerChallenge = ({ onGameOver, onBack }: { onGameOver: (sco
            <div className="w-full max-w-4xl flex justify-between items-center mb-6">
               <button onClick={onBack} className="p-2 bg-slate-800 rounded-full text-white hover:bg-slate-700">
                   <ArrowLeft />
-              </button>
-              <div className="text-center">
-                  <h2 className="text-xl md:text-2xl font-bold text-red-500">FORTIMANAGER ADMIN</h2>
-                  <p className="text-slate-400 text-[10px] md:text-xs font-mono">GLOBAL ADOM - PREGUNTA {currentQuestionIdx + 1}/{questions.length}</p>
-              </div>
-              <div className="flex gap-2 md:gap-4">
-                   <div className="flex items-center gap-1 text-red-500">
-                       <Activity className="animate-pulse" size={16}/>
-                       <span className="font-mono font-bold text-sm">{lives} VIDAS</span>
+               </button>
+               <div className="text-center">
+                   <h2 className="text-xl md:text-2xl font-bold text-red-500">FORTIMANAGER ADMIN</h2>
+                   <p className="text-slate-400 text-[10px] md:text-xs font-mono">GLOBAL ADOM - PREGUNTA {currentQ.id} ({currentQuestionIdx + 1}/{questions.length})</p>
+               </div>
+               <div className="flex gap-2 md:gap-4">
+                    <div className="flex items-center gap-1 text-red-500">
+                        <Activity className="animate-pulse" size={16}/>
+                        <span className="font-mono font-bold text-sm">{lives} VIDAS</span>
+                    </div>
+                    <div className="text-emerald-400 font-mono font-bold text-sm hidden md:block">{score} XP</div>
+               </div>
+           </div>
+
+           <div className="w-full max-w-4xl bg-black rounded-lg border border-red-900/50 shadow-[0_0_20px_rgba(220,38,38,0.15)] overflow-hidden flex flex-col relative">
+               <div className="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-red-900">
+                   <div className="flex gap-1.5">
+                       <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                       <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                       <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
                    </div>
-                   <div className="text-emerald-400 font-mono font-bold text-sm hidden md:block">{score} XP</div>
-              </div>
-          </div>
+                   <span className="ml-2 text-xs text-slate-400 font-mono">FortiManager GUI / CLI - {currentQ.category}</span>
+               </div>
 
-          <div className="w-full max-w-4xl bg-black rounded-lg border border-red-900/50 shadow-[0_0_20px_rgba(220,38,38,0.15)] overflow-hidden flex flex-col relative">
-              <div className="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-red-900">
-                  <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                      <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  </div>
-                  <span className="ml-2 text-xs text-slate-400 font-mono">FortiManager GUI / CLI - {currentQ.category}</span>
-              </div>
+               <div className="p-4 md:p-6 font-mono text-sm md:text-base flex-grow flex flex-col">
+                   <div className="text-slate-300 mb-6 border-b border-slate-800 pb-4 whitespace-pre-wrap">
+                       <div className="flex flex-wrap items-center gap-2 mb-3 select-none -mt-1">
+                           <span className="bg-red-950/80 text-red-400 border border-red-900/40 px-2.5 py-0.5 rounded text-[11px] uppercase font-bold font-mono tracking-wider shadow-sm">
+                               PREGUNTA {currentQ.id} (PDF)
+                           </span>
+                           <span className="text-slate-500 font-mono text-[10px] uppercase">
+                               • CATEGORÍA: {currentQ.category}
+                           </span>
+                       </div>
+                       <span className="text-red-400 font-bold font-mono">ESCENARIO &gt;&gt;</span> {currentQ.scenario}
+                   </div>
+                   
+                   <FortinetGUI questionId={currentQ.id} codeBlock={currentQ.codeBlock} game="fortimanager" />
 
-              <div className="p-4 md:p-6 font-mono text-sm md:text-base flex-grow flex flex-col">
-                  <div className="text-slate-300 mb-6 border-b border-slate-800 pb-4 whitespace-pre-wrap">
-                      <span className="text-red-400 font-bold">INFO &gt;&gt;</span> {currentQ.scenario}
-                  </div>
-                  
-                  <FortinetGUI questionId={currentQ.id} codeBlock={currentQ.codeBlock} />
+                   <div className="grid grid-cols-1 md:grid-cols-1 gap-3 mt-auto mb-4">
+                       {!showFeedback ? (
+                           <>
+                             {currentQ.options.map((opt: any, idx: number) => (
+                                 <button
+                                     key={idx}
+                                     onClick={() => handleOptionSelect(opt)}
+                                     className={`text-left px-4 py-3 bg-slate-800 border rounded transition-all group flex items-center ${
+                                         selectedOptions.includes(opt) 
+                                           ? 'border-red-500 bg-slate-700 text-red-200 font-medium' 
+                                           : 'border-slate-600 hover:bg-slate-700 hover:border-red-500 hover:text-red-200'
+                                     }`}
+                                 >
+                                     <span className="text-slate-500 mr-3 group-hover:text-red-400">&gt;</span>
+                                     {opt.label}
+                                 </button>
+                             ))}
+                             {isMultiSelect && (
+                                 <button 
+                                     onClick={() => {
+                                         if (selectedOptions.length === 0) return;
+                                         setShowFeedback(true);
+                                         const expectedCorrect = currentQ.options.filter((o: any) => o.correct).length;
+                                         const actualCorrect = selectedOptions.filter((o: any) => o.correct).length;
+                                         if (actualCorrect === expectedCorrect && selectedOptions.length === expectedCorrect) {
+                                             sounds.playSuccess();
+                                         } else {
+                                             sounds.playError();
+                                         }
+                                     }}
+                                     disabled={selectedOptions.length === 0}
+                                     className="mt-4 px-6 py-2 bg-red-650 disabled:bg-slate-700 disabled:text-slate-500 hover:bg-red-500 text-white rounded font-bold transition-colors w-full z-10 relative shadow-lg"
+                                 >
+                                     VERIFICAR SELECCIÓN
+                                 </button>
+                             )}
+                           </>
+                       ) : (
+                           <motion.div 
+                             initial={{ opacity: 0, scale: 0.95 }}
+                             animate={{ opacity: 1, scale: 1 }}
+                             className={`p-4 rounded border ${(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? 'bg-emerald-900/30 border-emerald-500' : 'bg-red-900/30 border-red-500'}`}
+                           >
+                               <div className="flex items-center gap-2 mb-2">
+                                   {(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? <CheckCircle className="text-emerald-500"/> : <XCircle className="text-red-500"/>}
+                                   <h3 className={`font-bold ${(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? 'text-emerald-400' : 'text-red-400'}`}>
+                                       {(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? 'CONFIRMADO' : 'INSTALL FAILED'}
+                                   </h3>
+                               </div>
+                               <p className="text-slate-300 mb-4 whitespace-pre-wrap">{currentQ.options.filter((o: any) => o.correct).map((o: any) => o.feedback || o.label).join('\n')}</p>
+                               <button 
+                                   onClick={handleNext}
+                                   className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded font-bold transition-colors w-full md:w-auto z-10 relative shadow-lg"
+                               >
+                                   {currentQuestionIdx < questions.length - 1 ? "CONTINUAR..." : "FINALIZAR SESIÓN"}
+                               </button>
+                           </motion.div>
+                       )}
+                   </div>
+               </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-1 gap-3 mt-auto mb-4">
-                      {!showFeedback ? (
-                          currentQ.options.map((opt: any, idx: number) => (
-                              <button
-                                  key={idx}
-                                  onClick={() => handleOptionSelect(opt)}
-                                  className="text-left px-4 py-3 bg-slate-800 border border-slate-600 rounded hover:bg-slate-700 hover:border-red-500 hover:text-red-200 transition-all group flex items-center"
-                              >
-                                  <span className="text-slate-500 mr-3 group-hover:text-red-400">&gt;</span>
-                                  {opt.label}
-                              </button>
-                          ))
-                      ) : (
-                          <motion.div 
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className={`p-4 rounded border ${selectedOption.correct ? 'bg-emerald-900/30 border-emerald-500' : 'bg-red-900/30 border-red-500'}`}
-                          >
-                              <div className="flex items-center gap-2 mb-2">
-                                  {selectedOption.correct ? <CheckCircle className="text-emerald-500"/> : <XCircle className="text-red-500"/>}
-                                  <h3 className={`font-bold ${selectedOption.correct ? 'text-emerald-400' : 'text-red-400'}`}>
-                                      {selectedOption.correct ? 'CONFIRMADO' : 'INSTALL FAILED'}
-                                  </h3>
-                              </div>
-                              <p className="text-slate-300 mb-4">{selectedOption.feedback}</p>
-                              <button 
-                                  onClick={handleNext}
-                                  className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded font-bold transition-colors w-full md:w-auto z-10 relative shadow-lg"
-                              >
-                                  {currentQuestionIdx < questions.length - 1 ? "CONTINUAR..." : "FINALIZAR SESIÓN"}
-                              </button>
-                          </motion.div>
-                      )}
-                  </div>
-              </div>
+               <RetroFirewallAnimation status={animStatus} />
 
-              <RetroFirewallAnimation status={animStatus} />
-
-          </div>
-      </div>
+           </div>
+       </div>
   );
 };

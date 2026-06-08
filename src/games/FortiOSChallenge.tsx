@@ -4,12 +4,13 @@ import { FORTIOS_QUESTIONS } from '../data/gamesData';
 import { motion } from 'motion/react';
 import { sounds } from '../utils/sounds';
 import { FortinetGUI } from '../components/FortinetGUIMockups';
+import { FORTIOS_EXHIBITS } from '../data/fortiosExhibits';
 
 export const FortiOSChallenge = ({ onGameOver, onBack }: { onGameOver: (score: number, tip: string) => void, onBack: () => void }) => {
   const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(5); // Started with 5 lives as recent user preference
-  const [selectedOption, setSelectedOption] = useState<any>(null);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const [questions, setQuestions] = useState<any[]>([]);
 
@@ -18,25 +19,40 @@ export const FortiOSChallenge = ({ onGameOver, onBack }: { onGameOver: (score: n
       setQuestions(shuffled);
   }, []);
 
+  const currentQ = questions[currentQuestionIdx];
+  const isMultiSelect = currentQ?.options.filter((o: any) => o.correct).length > 1;
+
   const handleOptionSelect = (option: any) => {
       if (showFeedback) return; 
-      setSelectedOption(option);
-      setShowFeedback(true);
-      if (option.correct) {
-          sounds.playSuccess();
+      if (isMultiSelect) {
+          if (selectedOptions.includes(option)) {
+              setSelectedOptions(selectedOptions.filter(o => o !== option));
+          } else {
+              setSelectedOptions([...selectedOptions, option]);
+          }
       } else {
-          sounds.playError();
+          setSelectedOptions([option]);
+          setShowFeedback(true);
+          if (option.correct) {
+              sounds.playSuccess();
+          } else {
+              sounds.playError();
+          }
       }
   };
 
   const handleNext = () => {
-      if (!selectedOption) return;
-      if (selectedOption.correct) {
+      if (selectedOptions.length === 0) return;
+      const correctOptionsCount = currentQ.options.filter((o: any) => o.correct).length;
+      const selectedCorrectCount = selectedOptions.filter((o: any) => o.correct).length;
+      const isAllCorrect = selectedCorrectCount === correctOptionsCount && selectedOptions.length === correctOptionsCount;
+
+      if (isAllCorrect) {
           setScore(s => s + 100);
           if (currentQuestionIdx < questions.length - 1) {
               setCurrentQuestionIdx(idx => idx + 1);
               setShowFeedback(false);
-              setSelectedOption(null);
+              setSelectedOptions([]);
           } else {
               onGameOver(score + 100, "¡Excelente! Has demostrado dominar los conceptos básicos de FortiOS 7.6.");
           }
@@ -46,8 +62,8 @@ export const FortiOSChallenge = ({ onGameOver, onBack }: { onGameOver: (score: n
               if (currentQuestionIdx < questions.length - 1) {
                   setCurrentQuestionIdx(idx => idx + 1);
                   setShowFeedback(false);
-                  setSelectedOption(null);
-              } else {
+                  setSelectedOptions([]);
+          } else {
                   onGameOver(score, "Has completado el desafío, pero tu configuración Firewall necesita revisión.");
               }
           } else {
@@ -55,8 +71,6 @@ export const FortiOSChallenge = ({ onGameOver, onBack }: { onGameOver: (score: n
           }
       }
   };
-
-  const currentQ = questions[currentQuestionIdx];
 
   if (!currentQ) return <div className="p-8 text-white">Cargando simulador FortiOS...</div>;
 
@@ -68,7 +82,7 @@ export const FortiOSChallenge = ({ onGameOver, onBack }: { onGameOver: (score: n
               </button>
               <div className="text-center">
                   <h2 className="text-xl md:text-2xl font-bold text-orange-500">FORTIOS ADMIN</h2>
-                  <p className="text-slate-400 text-[10px] md:text-xs font-mono">VDOM ROOT - PREGUNTA {currentQuestionIdx + 1}/{questions.length}</p>
+                  <p className="text-slate-400 text-[10px] md:text-xs font-mono">VDOM ROOT - PREGUNTA {currentQ.id} ({currentQuestionIdx + 1}/{questions.length})</p>
               </div>
               <div className="flex gap-2 md:gap-4">
                    <div className="flex items-center gap-1 text-orange-500">
@@ -96,33 +110,58 @@ export const FortiOSChallenge = ({ onGameOver, onBack }: { onGameOver: (score: n
                   
                   {/* Reuse FortinetGUI structure - we'll treat it as standard here initially 
                       or fallback to the CLI view built into FortinetGUI if codeBlock is passed */}
-                  <FortinetGUI questionId={currentQ.id} codeBlock={currentQ.codeBlock} />
+                  <FortinetGUI questionId={currentQ.id} codeBlock={currentQ.codeBlock || FORTIOS_EXHIBITS[currentQ.id as keyof typeof FORTIOS_EXHIBITS]} />
 
                   <div className="grid grid-cols-1 md:grid-cols-1 gap-3 mt-auto mb-4">
                       {!showFeedback ? (
-                          currentQ.options.map((opt: any, idx: number) => (
-                              <button
-                                  key={idx}
-                                  onClick={() => handleOptionSelect(opt)}
-                                  className="text-left px-4 py-3 bg-slate-800 border border-slate-600 rounded hover:bg-slate-700 hover:border-orange-500 hover:text-orange-200 transition-all group flex items-center"
-                              >
-                                  <span className="text-slate-500 mr-3 group-hover:text-orange-400">&gt;</span>
-                                  {opt.label}
-                              </button>
-                          ))
+                          <>
+                            {currentQ.options.map((opt: any, idx: number) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => handleOptionSelect(opt)}
+                                    className={`text-left px-4 py-3 bg-slate-800 border rounded transition-all group flex items-center ${
+                                        selectedOptions.includes(opt) 
+                                          ? 'border-orange-500 bg-slate-700 text-orange-200' 
+                                          : 'border-slate-600 hover:bg-slate-700 hover:border-orange-500 hover:text-orange-200'
+                                    }`}
+                                >
+                                    <span className="text-slate-500 mr-3 group-hover:text-orange-400">&gt;</span>
+                                    {opt.label}
+                                </button>
+                            ))}
+                            {isMultiSelect && (
+                                <button 
+                                    onClick={() => {
+                                        if (selectedOptions.length === 0) return;
+                                        setShowFeedback(true);
+                                        const expectedCorrect = currentQ.options.filter((o: any) => o.correct).length;
+                                        const actualCorrect = selectedOptions.filter((o: any) => o.correct).length;
+                                        if (actualCorrect === expectedCorrect && selectedOptions.length === expectedCorrect) {
+                                            sounds.playSuccess();
+                                        } else {
+                                            sounds.playError();
+                                        }
+                                    }}
+                                    disabled={selectedOptions.length === 0}
+                                    className="mt-4 px-6 py-2 bg-orange-600 disabled:bg-slate-700 disabled:text-slate-500 hover:bg-orange-500 text-white rounded font-bold transition-colors w-full z-10 relative shadow-lg"
+                                >
+                                    VERIFICAR SELECCIÓN
+                                </button>
+                            )}
+                          </>
                       ) : (
                           <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className={`p-4 rounded border ${selectedOption.correct ? 'bg-emerald-900/30 border-emerald-500' : 'bg-red-900/30 border-red-500'}`}
+                            className={`p-4 rounded border ${(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? 'bg-emerald-900/30 border-emerald-500' : 'bg-red-900/30 border-red-500'}`}
                           >
                               <div className="flex items-center gap-2 mb-2">
-                                  {selectedOption.correct ? <CheckCircle className="text-emerald-500"/> : <XCircle className="text-red-500"/>}
-                                  <h3 className={`font-bold ${selectedOption.correct ? 'text-emerald-400' : 'text-red-400'}`}>
-                                      {selectedOption.correct ? 'CONFIRMADO' : 'CFG FAILED'}
+                                  {(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? <CheckCircle className="text-emerald-500"/> : <XCircle className="text-red-500"/>}
+                                  <h3 className={`font-bold ${(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? 'text-emerald-400' : 'text-red-400'}`}>
+                                      {(selectedOptions.filter((o: any) => o.correct).length === currentQ.options.filter((o: any) => o.correct).length && selectedOptions.length === currentQ.options.filter((o: any) => o.correct).length) ? 'CONFIRMADO' : 'CFG FAILED'}
                                   </h3>
                               </div>
-                              <p className="text-slate-300 mb-4">{selectedOption.feedback}</p>
+                              <p className="text-slate-300 mb-4 whitespace-pre-wrap">{currentQ.options.filter((o: any) => o.correct).map((o: any) => o.feedback || o.label).join('\n')}</p>
                               <button 
                                   onClick={handleNext}
                                   className="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded font-bold transition-colors w-full md:w-auto z-10 relative shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
